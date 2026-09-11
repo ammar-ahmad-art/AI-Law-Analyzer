@@ -33,7 +33,7 @@ EMBEDDING_MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12
 
 # A current Groq model can be overridden with the GROQ_MODEL
 # environment variable / Streamlit secret.
-DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile"
+DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b"
 
 SUPPORTED_EXTENSIONS = ["pdf", "png", "jpg", "jpeg"]
 
