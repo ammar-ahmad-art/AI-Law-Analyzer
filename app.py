@@ -46,6 +46,12 @@ import sys
 from io import BytesIO
 from typing import List, Dict, Any
 
+import io
+import fitz
+import pytesseract
+
+from PIL import Image
+
 
 # ============================================================
 # OPTIONAL AUTO-INSTALL
