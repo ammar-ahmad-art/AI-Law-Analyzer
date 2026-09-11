@@ -491,48 +491,62 @@ def extract_pdf(
     return pages
 
 
-def extract_image(
-    file_bytes
-):
+def extract_pdf(file_bytes):
+    pages = []
 
-    try:
+    document = fitz.open(
+        stream=file_bytes,
+        filetype="pdf"
+    )
 
-        import pytesseract
+    for page_number, page in enumerate(document, start=1):
 
-        image = Image.open(
-            BytesIO(file_bytes)
-        )
+        # First try normal PDF text extraction
+        text = page.get_text("text").strip()
 
-        try:
+        # If no text exists, treat the page as a scanned document
+        if not text:
+            try:
+                import pytesseract
 
-            text = pytesseract.image_to_string(
-                image,
-                lang="eng+urd"
-            )
+                # Render PDF page as an image
+                pix = page.get_pixmap(
+                    matrix=fitz.Matrix(2, 2)
+                )
 
-        except Exception:
+                image = Image.frombytes(
+                    "RGB",
+                    [pix.width, pix.height],
+                    pix.samples
+                )
 
-            text = pytesseract.image_to_string(
-                image
-            )
+                # OCR
+                try:
+                    text = pytesseract.image_to_string(
+                        image,
+                        lang="eng+urd"
+                    )
+                except Exception:
+                    # Fall back to English if Urdu language data
+                    # is not installed
+                    text = pytesseract.image_to_string(
+                        image,
+                        lang="eng"
+                    )
 
-        return [
-            {
-                "page": 1,
-                "text": text.strip()
-            }
-        ]
+                text = text.strip()
 
-    except Exception as error:
+            except Exception as error:
+                text = ""
 
-        return [
-            {
-                "page": 1,
-                "text": "",
-                "error": str(error)
-            }
-        ]
+        pages.append({
+            "page": page_number,
+            "text": text
+        })
 
+    document.close()
+
+    return pages
 
 def extract_document(
     filename,
