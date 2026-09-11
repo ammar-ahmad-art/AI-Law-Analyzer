@@ -459,127 +459,184 @@ if "filename" not in st.session_state:
 # DOCUMENT EXTRACTION
 # ============================================================
 
-def extract_pdf(
-    file_bytes
-):
+def extract_pdf(file_bytes):
+    """
+    Extract text from a PDF.
+
+    1. First tries normal PDF text extraction.
+    2. If a page has no selectable text, OCR is used.
+    3. Supports both English and Urdu OCR.
+    """
 
     pages = []
 
-    document = fitz.open(
-        stream=file_bytes,
-        filetype="pdf"
-    )
+    try:
+        document = fitz.open(
+            stream=file_bytes,
+            filetype="pdf"
+        )
 
-    for page_number, page in enumerate(
-        document,
-        start=1
+        for page_number, page in enumerate(document, start=1):
+
+            # ------------------------------------------------
+            # STEP 1: Try normal PDF text extraction
+            # ------------------------------------------------
+            text = page.get_text("text").strip()
+
+            # ------------------------------------------------
+            # STEP 2: If no text was found, use OCR
+            # ------------------------------------------------
+            if not text:
+
+                try:
+                    # Render the PDF page as an image.
+                    # 2x resolution gives OCR better quality.
+                    pixmap = page.get_pixmap(
+                        matrix=fitz.Matrix(2, 2),
+                        alpha=False
+                    )
+
+                    # Convert PyMuPDF image into PIL image
+                    image = Image.frombytes(
+                        "RGB",
+                        [pixmap.width, pixmap.height],
+                        pixmap.samples
+                    )
+
+                    # Try English + Urdu OCR first
+                    try:
+                        text = pytesseract.image_to_string(
+                            image,
+                            lang="eng+urd"
+                        )
+
+                    except Exception:
+                        # If Urdu language data is unavailable,
+                        # fall back to English OCR.
+                        text = pytesseract.image_to_string(
+                            image,
+                            lang="eng"
+                        )
+
+                    text = text.strip()
+
+                except Exception as e:
+                    st.warning(
+                        f"OCR failed on PDF page {page_number}: {e}"
+                    )
+
+                    text = ""
+
+            # ------------------------------------------------
+            # Store page result
+            # ------------------------------------------------
+            pages.append({
+                "page": page_number,
+                "text": text
+            })
+
+        document.close()
+
+    except Exception as e:
+        st.error(f"Could not read PDF: {e}")
+
+        return []
+
+    return pages
+
+
+def extract_image(file_bytes):
+    """
+    Extract text from JPG, JPEG or PNG images using OCR.
+    """
+
+    try:
+        # Convert uploaded bytes into a PIL image
+        image = Image.open(
+            io.BytesIO(file_bytes)
+        )
+
+        # ------------------------------------------------
+        # Try English + Urdu OCR
+        # ------------------------------------------------
+        try:
+            text = pytesseract.image_to_string(
+                image,
+                lang="eng+urd"
+            )
+
+        except Exception:
+            # Fall back to English if Urdu OCR data
+            # is not installed.
+            text = pytesseract.image_to_string(
+                image,
+                lang="eng"
+            )
+
+        return [{
+            "page": 1,
+            "text": text.strip()
+        }]
+
+    except Exception as e:
+
+        st.error(
+            f"Could not read image: {e}"
+        )
+
+        return [{
+            "page": 1,
+            "text": ""
+        }]
+
+
+def extract_document(filename, file_bytes):
+    """
+    Detect the uploaded document type and extract its text.
+
+    Supported:
+        - PDF
+        - PNG
+        - JPG
+        - JPEG
+    """
+
+    filename = filename.lower()
+
+    # ------------------------------------------------
+    # PDF
+    # ------------------------------------------------
+    if filename.endswith(".pdf"):
+
+        return extract_pdf(file_bytes)
+
+    # ------------------------------------------------
+    # Image
+    # ------------------------------------------------
+    elif (
+        filename.endswith(".png")
+        or filename.endswith(".jpg")
+        or filename.endswith(".jpeg")
     ):
 
-        text = page.get_text(
-            "text"
-        ).strip()
+        return extract_image(file_bytes)
 
-        pages.append(
-            {
-                "page": page_number,
-                "text": text,
-            }
+    # ------------------------------------------------
+    # Unsupported file
+    # ------------------------------------------------
+    else:
+
+        st.error(
+            "Unsupported file type. "
+            "Please upload a PDF, PNG, JPG or JPEG file."
         )
 
-    document.close()
-
-    return pages
+        return []
 
 
-def extract_pdf(file_bytes):
-    pages = []
-
-    document = fitz.open(
-        stream=file_bytes,
-        filetype="pdf"
-    )
-
-    for page_number, page in enumerate(document, start=1):
-
-        # First try normal PDF text extraction
-        text = page.get_text("text").strip()
-
-        # If no text exists, treat the page as a scanned document
-        if not text:
-            try:
-                import pytesseract
-
-                # Render PDF page as an image
-                pix = page.get_pixmap(
-                    matrix=fitz.Matrix(2, 2)
-                )
-
-                image = Image.frombytes(
-                    "RGB",
-                    [pix.width, pix.height],
-                    pix.samples
-                )
-
-                # OCR
-                try:
-                    text = pytesseract.image_to_string(
-                        image,
-                        lang="eng+urd"
-                    )
-                except Exception:
-                    # Fall back to English if Urdu language data
-                    # is not installed
-                    text = pytesseract.image_to_string(
-                        image,
-                        lang="eng"
-                    )
-
-                text = text.strip()
-
-            except Exception as error:
-                text = ""
-
-        pages.append({
-            "page": page_number,
-            "text": text
-        })
-
-    document.close()
-
-    return pages
-
-def extract_document(
-    filename,
-    file_bytes
-):
-
-    extension = (
-        filename
-        .lower()
-        .split(".")[-1]
-    )
-
-    if extension == "pdf":
-
-        return extract_pdf(
-            file_bytes
-        )
-
-    if extension in [
-        "png",
-        "jpg",
-        "jpeg",
-        "webp",
-    ]:
-
-        return extract_image(
-            file_bytes
-        )
-
-    raise ValueError(
-        "Unsupported file format."
-    )
-
+# ============================================================
+# END OF DOCUMENT EXTRACTION
+# ============================================================
 
 # ============================================================
 # CHUNKING
