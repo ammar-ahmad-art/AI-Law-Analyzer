@@ -1283,246 +1283,1443 @@ def render_extracted_text(
 # SIDEBAR
 # ============================================================
 
+# ============================================================
+# DOCUMIND UI
+# ============================================================
+
+# ------------------------------------------------------------
+# CUSTOM CSS
+# ------------------------------------------------------------
+
+st.markdown("""
+<style>
+
+    /* ========================================================
+       GLOBAL
+       ======================================================== */
+
+    .stApp {
+        background: #030a16;
+        color: #f8fafc;
+    }
+
+    .block-container {
+        padding: 1.5rem 2rem 3rem 2rem !important;
+        max-width: 1500px !important;
+    }
+
+    #MainMenu {
+        visibility: hidden;
+    }
+
+    footer {
+        visibility: hidden;
+    }
+
+    header {
+        visibility: hidden;
+    }
+
+
+    /* ========================================================
+       SIDEBAR
+       ======================================================== */
+
+    section[data-testid="stSidebar"] {
+        background: #040d1a;
+        border-right: 1px solid #111e38;
+    }
+
+    section[data-testid="stSidebar"] > div {
+        padding: 25px 18px;
+    }
+
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .sidebar-logo-icon {
+        width: 45px;
+        height: 45px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #6366f1 0%,
+                #3b82f6 100%
+            );
+
+        font-size: 22px;
+
+        box-shadow:
+            0 0 18px rgba(99,102,241,0.35);
+    }
+
+    .sidebar-logo-text {
+        color: white;
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .sidebar-logo-text span {
+        display: block;
+        color: #60a5fa;
+        font-size: 14px;
+        margin-top: 2px;
+    }
+
+    .sidebar-tagline {
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 8px 0 25px 2px;
+    }
+
+    .sidebar-heading {
+        color: #475569;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        margin: 25px 0 10px 2px;
+    }
+
+    .sidebar-item {
+        color: #94a3b8;
+        font-size: 13px;
+        padding: 10px 12px;
+        border-radius: 9px;
+        margin-bottom: 4px;
+    }
+
+    .sidebar-item.active {
+        background:
+            linear-gradient(
+                90deg,
+                #1d3557 0%,
+                #0c192e 100%
+            );
+
+        color: #38bdf8;
+
+        border-left: 3px solid #38bdf8;
+    }
+
+    .sidebar-status {
+        background: #06152d;
+        border: 1px solid #162a4a;
+        border-radius: 12px;
+        padding: 13px;
+        margin-top: 18px;
+    }
+
+    .sidebar-status-title {
+        color: #38bdf8;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .sidebar-status-text {
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+
+    /* ========================================================
+       TOP HEADER
+       ======================================================== */
+
+    .top-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .top-brand {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .top-user {
+        color: #cbd5e1;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+
+    /* ========================================================
+       HERO
+       ======================================================== */
+
+    .hero {
+        background:
+            linear-gradient(
+                135deg,
+                #06152d 0%,
+                #040e1e 100%
+            );
+
+        border: 1px solid #162a4a;
+
+        border-radius: 20px;
+
+        padding: 30px 32px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        min-height: 210px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 12px 35px rgba(0,0,0,0.35);
+
+        margin-bottom: 20px;
+    }
+
+    .hero-content {
+        max-width: 720px;
+    }
+
+    .hero-title-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .hero-icon {
+        width: 50px;
+        height: 50px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background:
+            rgba(56,189,248,0.1);
+
+        border:
+            1px solid rgba(56,189,248,0.3);
+
+        font-size: 25px;
+
+        box-shadow:
+            0 0 18px rgba(56,189,248,0.15);
+    }
+
+    .hero-title {
+        margin: 0;
+        color: white;
+        font-size: 31px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .hero-title span {
+        color: #60a5fa;
+    }
+
+    .hero-subtitle {
+        margin: 0 0 8px 0;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .hero-description {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .hero-document {
+        width: 105px;
+        height: 120px;
+
+        position: relative;
+
+        background:
+            linear-gradient(
+                180deg,
+                #93c5fd 0%,
+                #60a5fa 100%
+            );
+
+        border-radius: 13px;
+
+        padding: 14px;
+
+        box-shadow:
+            0 10px 30px rgba(96,165,250,0.25);
+    }
+
+    .hero-document-line {
+        height: 4px;
+        background: white;
+        border-radius: 3px;
+        opacity: 0.8;
+        margin-bottom: 10px;
+    }
+
+    .hero-alert {
+        position: absolute;
+
+        width: 46px;
+        height: 46px;
+
+        right: -16px;
+        bottom: -12px;
+
+        border-radius: 50%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: #06152d;
+
+        border: 3px solid #38bdf8;
+
+        font-size: 20px;
+    }
+
+
+    /* ========================================================
+       FEATURE CARDS
+       ======================================================== */
+
+    .feature-card {
+        background: #06152d;
+        border: 1px solid #162a4a;
+        border-radius: 16px;
+        padding: 19px 17px;
+        min-height: 138px;
+    }
+
+    .feature-icon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(56,189,248,0.1);
+
+        border:
+            1px solid rgba(56,189,248,0.2);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 17px;
+
+        margin-bottom: 13px;
+    }
+
+    .feature-card h4 {
+        color: white;
+        font-size: 14px;
+        margin: 0 0 6px 0;
+        font-weight: 700;
+    }
+
+    .feature-card p {
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+
+    /* ========================================================
+       MAIN CARDS
+       ======================================================== */
+
+    .main-card {
+        background: #06152d;
+        border: 1px solid #162a4a;
+        border-radius: 18px;
+        padding: 24px;
+        margin-top: 20px;
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-bottom: 18px;
+    }
+
+    .section-heading-icon {
+        width: 34px;
+        height: 34px;
+
+        border-radius: 9px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background:
+            rgba(56,189,248,0.1);
+
+        color: #38bdf8;
+
+        font-size: 16px;
+    }
+
+    .section-heading h3 {
+        color: white;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .section-heading p {
+        color: #64748b;
+        font-size: 11px;
+        margin: 2px 0 0 0;
+    }
+
+
+    /* ========================================================
+       FILE UPLOADER
+       ======================================================== */
+
+    [data-testid="stFileUploader"] {
+        width: 100%;
+    }
+
+    [data-testid="stFileUploaderDropzone"] {
+        background: #030c1c !important;
+
+        border:
+            2px dashed #1d4ed8 !important;
+
+        border-radius: 14px !important;
+
+        min-height: 170px;
+
+        transition: 0.2s;
+    }
+
+    [data-testid="stFileUploaderDropzone"]:hover {
+        border-color: #38bdf8 !important;
+        background: rgba(56,189,248,0.02) !important;
+    }
+
+    [data-testid="stFileUploaderDropzoneInstructions"] {
+        color: #94a3b8 !important;
+    }
+
+
+    /* ========================================================
+       BUTTONS
+       ======================================================== */
+
+    .stButton > button {
+        border-radius: 10px;
+
+        background: #2563eb;
+
+        border: 1px solid #2563eb;
+
+        color: white;
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+        padding: 10px 16px;
+
+        transition: 0.2s;
+
+        box-shadow:
+            0 5px 18px rgba(37,99,235,0.18);
+    }
+
+    .stButton > button:hover {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+
+    /* ========================================================
+       TIP
+       ======================================================== */
+
+    .tip {
+        background: #041226;
+        border: 1px solid #1d4ed8;
+        border-radius: 10px;
+        padding: 12px 15px;
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.5;
+        margin-top: 15px;
+    }
+
+    .tip strong {
+        color: #38bdf8;
+    }
+
+
+    /* ========================================================
+       RIGHT SIDE
+       ======================================================== */
+
+    .side-card {
+        background: #06152d;
+        border: 1px solid #162a4a;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .side-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 17px;
+    }
+
+    .side-title-icon {
+        color: #38bdf8;
+        font-size: 18px;
+    }
+
+    .side-title h3 {
+        color: white;
+        font-size: 15px;
+        margin: 0;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: #cbd5e1;
+        font-size: 12px;
+        margin-bottom: 14px;
+    }
+
+    .step:last-child {
+        margin-bottom: 0;
+    }
+
+    .step-number {
+        width: 24px;
+        height: 24px;
+
+        border-radius: 50%;
+
+        background: #2563eb;
+
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 11px;
+        font-weight: 700;
+
+        flex-shrink: 0;
+    }
+
+    .side-description {
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+
+    /* ========================================================
+       METRICS
+       ======================================================== */
+
+    div[data-testid="stMetric"] {
+        background: #06152d;
+        border: 1px solid #162a4a;
+        border-radius: 13px;
+        padding: 15px;
+    }
+
+    div[data-testid="stMetricLabel"] {
+        color: #64748b !important;
+    }
+
+    div[data-testid="stMetricValue"] {
+        color: white !important;
+    }
+
+
+    /* ========================================================
+       TABS
+       ======================================================== */
+
+    button[data-baseweb="tab"] {
+        color: #64748b !important;
+    }
+
+    button[data-baseweb="tab"][aria-selected="true"] {
+        color: #38bdf8 !important;
+    }
+
+    div[data-baseweb="tab-highlight"] {
+        background: #38bdf8 !important;
+    }
+
+
+    /* ========================================================
+       DISCLAIMER
+       ======================================================== */
+
+    .disclaimer {
+        background: #071426;
+        border: 1px solid #162a4a;
+        border-radius: 11px;
+
+        padding: 12px 15px;
+
+        color: #64748b;
+
+        font-size: 11px;
+
+        line-height: 1.5;
+
+        margin-bottom: 20px;
+    }
+
+    .disclaimer strong {
+        color: #fbbf24;
+    }
+
+
+    /* ========================================================
+       MOBILE
+       ======================================================== */
+
+    @media (max-width: 900px) {
+
+        .hero-document {
+            display: none;
+        }
+
+        .hero-title {
+            font-size: 25px;
+        }
+    }
+
+    @media (max-width: 650px) {
+
+        .block-container {
+            padding: 1rem !important;
+        }
+
+        .hero {
+            padding: 22px;
+        }
+
+        .hero-title {
+            font-size: 22px;
+        }
+
+        .hero-subtitle {
+            font-size: 14px;
+        }
+
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
+
+# ============================================================
+# SIDEBAR
+# ============================================================
+
 with st.sidebar:
-    st.header("⚙️ Settings")
+
+    st.markdown("""
+    <div class="sidebar-logo">
+
+        <div class="sidebar-logo-icon">
+            🧠
+        </div>
+
+        <div class="sidebar-logo-text">
+            DocuMind
+            <span>Legal AI</span>
+        </div>
+
+    </div>
+
+    <div class="sidebar-tagline">
+        Pakistan Legal & Contract<br>
+        Risk Analyzer
+    </div>
+    """, unsafe_allow_html=True)
+
+
+    st.markdown("""
+    <div class="sidebar-heading">
+        Navigation
+    </div>
+
+    <div class="sidebar-item active">
+        🏠 &nbsp; Home
+    </div>
+
+    <div class="sidebar-item">
+        📄 &nbsp; Upload Document
+    </div>
+
+    <div class="sidebar-item">
+        🔍 &nbsp; Scan & Analyze
+    </div>
+
+    <div class="sidebar-item">
+        ⚠️ &nbsp; Risks & Rights
+    </div>
+    """, unsafe_allow_html=True)
+
+
+    # --------------------------------------------------------
+    # Existing language selector
+    # --------------------------------------------------------
+
+    st.markdown("""
+    <div class="sidebar-heading">
+        AI Settings
+    </div>
+    """, unsafe_allow_html=True)
 
     language = st.selectbox(
-        "AI response language",
+        "Response language",
         ["English", "Urdu"],
         index=0,
+        label_visibility="collapsed",
     )
 
-    st.divider()
 
-    st.subheader("System status")
+    # --------------------------------------------------------
+    # System status
+    # --------------------------------------------------------
+
+    st.markdown("""
+    <div class="sidebar-heading">
+        System Status
+    </div>
+    """, unsafe_allow_html=True)
 
     if TESSERACT_AVAILABLE:
-        st.success("OCR: Ready")
+        st.success("🟢 OCR: Ready")
     else:
-        st.error("OCR: Not available")
+        st.error("🔴 OCR: Not available")
         st.caption(TESSERACT_STATUS)
 
     if get_secret("GROQ_API_KEY"):
-        st.success("Groq API key: Found")
+        st.success("🟢 Groq API: Connected")
     else:
-        st.warning("Groq API key: Missing")
+        st.warning("🟡 Groq API: Missing")
 
-    st.caption(
-        f"Embedding model: {EMBEDDING_MODEL_NAME}"
+
+    st.markdown("""
+    <div class="sidebar-status">
+
+        <div class="sidebar-status-title">
+            🛡️ Privacy First
+        </div>
+
+        <div class="sidebar-status-text">
+            Documents are processed for AI-assisted
+            analysis. Do not upload documents containing
+            information you are not authorized to process.
+        </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ============================================================
+# TOP HEADER
+# ============================================================
+
+st.markdown("""
+<div class="top-header">
+
+    <div class="top-brand">
+        Pakistan Legal AI • Hackathon MVP
+    </div>
+
+    <div class="top-user">
+        🛡️ AI Legal Assistant
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
+
+
+# ============================================================
+# HERO
+# ============================================================
+
+st.markdown("""
+<div class="hero">
+
+    <div class="hero-content">
+
+        <div class="hero-title-row">
+
+            <div class="hero-icon">
+                🛡️
+            </div>
+
+            <h1 class="hero-title">
+                DocuMind
+                <span>Legal AI</span>
+            </h1>
+
+        </div>
+
+        <h3 class="hero-subtitle">
+            Find hidden risks in your Pakistani legal documents.
+        </h3>
+
+        <p class="hero-description">
+            Upload a legal document and let AI analyze potentially
+            risky clauses, important rights, missing provisions and
+            relevant Pakistani legal sources — in simple language.
+        </p>
+
+    </div>
+
+
+    <div class="hero-document">
+
+        <div class="hero-document-line"
+             style="width:70%;">
+        </div>
+
+        <div class="hero-document-line"
+             style="width:100%;">
+        </div>
+
+        <div class="hero-document-line"
+             style="width:90%;">
+        </div>
+
+        <div class="hero-document-line"
+             style="width:60%;">
+        </div>
+
+        <div class="hero-alert">
+            ⚠️
+        </div>
+
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
+
+
+# ============================================================
+# MAIN GRID
+# ============================================================
+
+left_column, right_column = st.columns(
+    [3.2, 1.15],
+    gap="large",
+)
+
+
+# ============================================================
+# LEFT COLUMN
+# ============================================================
+
+with left_column:
+
+    # --------------------------------------------------------
+    # FEATURE CARDS
+    # --------------------------------------------------------
+
+    feature1, feature2, feature3, feature4 = st.columns(4)
+
+    with feature1:
+        st.markdown("""
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🛡️
+            </div>
+
+            <h4>
+                Find Hidden Clauses
+            </h4>
+
+            <p>
+                Detect potentially unfair or risky
+                language in your document.
+            </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    with feature2:
+        st.markdown("""
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                📄
+            </div>
+
+            <h4>
+                Check Compliance
+            </h4>
+
+            <p>
+                Compare relevant provisions with
+                Pakistani legal sources.
+            </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    with feature3:
+        st.markdown("""
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                ⚠️
+            </div>
+
+            <h4>
+                Assess Legal Risks
+            </h4>
+
+            <p>
+                Identify potential liabilities and
+                problematic provisions.
+            </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    with feature4:
+        st.markdown("""
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                💡
+            </div>
+
+            <h4>
+                Get Simple Insights
+            </h4>
+
+            <p>
+                Understand complex legal language
+                more easily.
+            </p>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    # --------------------------------------------------------
+    # UPLOAD CARD
+    # --------------------------------------------------------
+
+    st.markdown("""
+    <div class="main-card">
+
+        <div class="section-heading">
+
+            <div class="section-heading-icon">
+                📄
+            </div>
+
+            <div>
+
+                <h3>
+                    Upload Your Legal Document
+                </h3>
+
+                <p>
+                    Choose a PDF or image and click Analyze.
+                </p>
+
+            </div>
+
+        </div>
+
+    """, unsafe_allow_html=True)
+
+
+    # --------------------------------------------------------
+    # REAL STREAMLIT FILE UPLOADER
+    # --------------------------------------------------------
+
+    uploaded_file = st.file_uploader(
+        "Choose a Pakistani legal document",
+        type=SUPPORTED_EXTENSIONS,
+        help="PDF, JPG, JPEG and PNG are supported.",
+        label_visibility="collapsed",
     )
 
-    st.divider()
 
-    st.markdown(
-        """
-        **Supported files**
+    st.markdown("""
+        <div class="tip">
 
-        • PDF  
-        • JPG  
-        • JPEG  
-        • PNG
-        """
-    )
+            <strong>💡 Tip:</strong>
+            Scanned PDFs and images require OCR.
+            Make sure the OCR status in the sidebar shows
+            <strong>Ready</strong> before analyzing scanned documents.
 
+        </div>
 
-# ============================================================
-# HEADER
-# ============================================================
-
-st.markdown(
-    f'<div class="app-title">⚖️ {APP_TITLE}</div>',
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    """
-    <div class="app-subtitle">
-    Upload a Pakistani legal document and get an AI-assisted,
-    evidence-grounded overview of its risks, rights, important clauses,
-    and potential omissions.
     </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    """
-    <div class="disclaimer">
-    <strong>Important:</strong> This tool provides informational
-    AI-assisted analysis and is not a substitute for advice from a
-    qualified lawyer. AI-generated analysis may contain errors.
-    Consult a licensed legal professional for decisions involving
-    significant legal rights, obligations, disputes, or financial
-    consequences.
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+    """, unsafe_allow_html=True)
 
 
-# ============================================================
-# UPLOAD SECTION
-# ============================================================
+    # --------------------------------------------------------
+    # FILE INFORMATION
+    # --------------------------------------------------------
 
-st.header("📄 Upload Document")
+    if uploaded_file is not None:
 
-uploaded_file = st.file_uploader(
-    "Choose a Pakistani legal document",
-    type=SUPPORTED_EXTENSIONS,
-    help="PDF, JPG, JPEG and PNG are supported.",
-)
+        file_bytes = uploaded_file.getvalue()
 
-if uploaded_file is not None:
-    file_bytes = uploaded_file.getvalue()
+        file_col1, file_col2, file_col3 = st.columns(3)
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.metric(
-            "File",
-            uploaded_file.name,
-        )
-
-    with col2:
-        st.metric(
-            "Size",
-            f"{len(file_bytes) / 1024:.1f} KB",
-        )
-
-    with col3:
-        extension = uploaded_file.name.rsplit(".", 1)[-1].upper()
-        st.metric(
-            "Type",
-            extension,
-        )
-
-    if st.button(
-        "🔍 Extract & Analyze Document",
-        type="primary",
-        use_container_width=True,
-    ):
-        # Clear old analysis.
-        st.session_state["pages"] = []
-        st.session_state["chunks"] = []
-        st.session_state["doc_index"] = None
-        st.session_state["legal_index"] = None
-        st.session_state["analysis"] = None
-        st.session_state["sources"] = []
-        st.session_state["chat_history"] = []
-        st.session_state["uploaded_name"] = uploaded_file.name
-        st.session_state["text_ready"] = False
-
-        try:
-            with st.spinner("Extracting document..."):
-                pages = extract_document(
-                    uploaded_file.name,
-                    file_bytes,
-                )
-
-            total_text = sum(
-                len(page.get("text", ""))
-                for page in pages
+        with file_col1:
+            st.metric(
+                "File",
+                uploaded_file.name,
             )
 
-            if not pages or total_text == 0:
-                st.error(
-                    "No readable text was found. "
-                    "If this is a scanned document, make sure Tesseract "
-                    "OCR is installed and available."
-                )
+        with file_col2:
+            st.metric(
+                "Size",
+                f"{len(file_bytes) / 1024:.1f} KB",
+            )
 
-                if not TESSERACT_AVAILABLE:
-                    st.info(
-                        "OCR is currently unavailable. "
-                        "Install Tesseract locally or add the required "
-                        "system packages for Streamlit Cloud."
+        with file_col3:
+
+            extension = (
+                uploaded_file.name
+                .rsplit(".", 1)[-1]
+                .upper()
+            )
+
+            st.metric(
+                "Type",
+                extension,
+            )
+
+
+        # ----------------------------------------------------
+        # ANALYZE BUTTON
+        # ----------------------------------------------------
+
+        analyze_clicked = st.button(
+            "🔍  Extract & Analyze Document",
+            type="primary",
+            use_container_width=True,
+        )
+
+
+        if analyze_clicked:
+
+            # Clear old analysis
+            st.session_state["pages"] = []
+            st.session_state["chunks"] = []
+            st.session_state["doc_index"] = None
+            st.session_state["legal_index"] = None
+            st.session_state["analysis"] = None
+            st.session_state["sources"] = []
+            st.session_state["chat_history"] = []
+            st.session_state["uploaded_name"] = uploaded_file.name
+            st.session_state["text_ready"] = False
+
+            try:
+
+                # ------------------------------------------------
+                # EXTRACTION
+                # ------------------------------------------------
+
+                with st.spinner(
+                    "📄 Extracting document and running OCR if needed..."
+                ):
+
+                    pages = extract_document(
+                        uploaded_file.name,
+                        file_bytes,
                     )
 
-                st.stop()
 
-            st.session_state["pages"] = pages
+                total_text = sum(
+                    len(page.get("text", ""))
+                    for page in pages
+                )
 
-            st.success(
-                f"Extraction complete: {len(pages)} page(s), "
-                f"{total_text:,} characters."
-            )
 
-            analysis = analyze_document(
-                pages=pages,
-                language=language,
-            )
+                if not pages or total_text == 0:
 
-            st.success("Analysis completed successfully.")
+                    st.error(
+                        "No readable text was found."
+                    )
 
-        except Exception as exc:
-            st.error(
-                f"Analysis failed: {exc}"
-            )
+                    if not TESSERACT_AVAILABLE:
 
-            with st.expander("Technical details"):
-                st.exception(exc)
+                        st.info(
+                            "OCR is currently unavailable. "
+                            "Install/configure Tesseract before "
+                            "processing scanned documents."
+                        )
+
+                    st.stop()
+
+
+                st.session_state["pages"] = pages
+                st.session_state["text_ready"] = True
+
+
+                st.success(
+                    f"Extraction complete: "
+                    f"{len(pages)} page(s), "
+                    f"{total_text:,} characters."
+                )
+
+
+                # ------------------------------------------------
+                # AI ANALYSIS
+                # ------------------------------------------------
+
+                with st.spinner(
+                    "🤖 AI is analyzing the document..."
+                ):
+
+                    analysis = analyze_document(
+                        pages=pages,
+                        language=language,
+                    )
+
+
+                st.success(
+                    "✅ Analysis completed successfully."
+                )
+
+
+            except Exception as exc:
+
+                st.error(
+                    f"Analysis failed: {exc}"
+                )
+
+                with st.expander(
+                    "Technical details"
+                ):
+                    st.exception(exc)
+
+
+# ============================================================
+# RIGHT COLUMN
+# ============================================================
+
+with right_column:
+
+    # --------------------------------------------------------
+    # QUICK START
+    # --------------------------------------------------------
+
+    st.markdown("""
+    <div class="side-card">
+
+        <div class="side-title">
+
+            <div class="side-title-icon">
+                🚀
+            </div>
+
+            <h3>
+                Quick Start
+            </h3>
+
+        </div>
+
+        <div class="step">
+
+            <div class="step-number">
+                1
+            </div>
+
+            <span>
+                Upload a legal document
+            </span>
+
+        </div>
+
+        <div class="step">
+
+            <div class="step-number">
+                2
+            </div>
+
+            <span>
+                Click Analyze
+            </span>
+
+        </div>
+
+        <div class="step">
+
+            <div class="step-number">
+                3
+            </div>
+
+            <span>
+                View risks and insights
+            </span>
+
+        </div>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+
+    # --------------------------------------------------------
+    # SUPPORTED FILES
+    # --------------------------------------------------------
+
+    st.markdown("""
+    <div class="side-card">
+
+        <div class="side-title">
+
+            <div class="side-title-icon">
+                📁
+            </div>
+
+            <h3>
+                Supported Documents
+            </h3>
+
+        </div>
+
+        <p class="side-description">
+            Upload contracts, agreements and other
+            Pakistani legal documents as PDF or image files.
+        </p>
+
+        <p style="
+            color:#38bdf8;
+            font-size:12px;
+            margin:0;
+        ">
+            PDF • JPG • JPEG • PNG
+        </p>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+
+    # --------------------------------------------------------
+    # AI DISCLAIMER
+    # --------------------------------------------------------
+
+    st.markdown("""
+    <div class="side-card"
+         style="text-align:center;">
+
+        <div style="
+            font-size:40px;
+            margin-bottom:8px;
+        ">
+            🛡️
+        </div>
+
+        <h3 style="
+            color:white;
+            font-size:16px;
+            margin:0 0 7px 0;
+        ">
+            AI Legal Assistant
+        </h3>
+
+        <p class="side-description"
+           style="margin-bottom:0;">
+
+            This application provides AI-assisted
+            informational analysis and does not replace
+            advice from a qualified lawyer.
+
+        </p>
+
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # ============================================================
 # RESULTS
 # ============================================================
 
-analysis = st.session_state.get("analysis")
-pages = st.session_state.get("pages", [])
+analysis = st.session_state.get(
+    "analysis"
+)
+
+pages = st.session_state.get(
+    "pages",
+    []
+)
+
 
 if analysis:
-    st.divider()
 
-    st.header("📊 Analysis Results")
+    st.markdown(
+        "<br>",
+        unsafe_allow_html=True,
+    )
 
-    risks = safe_list(analysis.get("risks"))
-    rights = safe_list(analysis.get("rights"))
-    missing = safe_list(analysis.get("missing_clauses"))
-    important = safe_list(analysis.get("important_clauses"))
+    st.markdown("""
+    <div class="main-card">
+
+        <div class="section-heading">
+
+            <div class="section-heading-icon">
+                📊
+            </div>
+
+            <div>
+
+                <h3>
+                    Analysis Results
+                </h3>
+
+                <p>
+                    AI-assisted analysis of your uploaded document
+                </p>
+
+            </div>
+
+        </div>
+
+    """, unsafe_allow_html=True)
+
+
+    risks = safe_list(
+        analysis.get("risks")
+    )
+
+    rights = safe_list(
+        analysis.get("rights")
+    )
+
+    missing = safe_list(
+        analysis.get("missing_clauses")
+    )
+
+    important = safe_list(
+        analysis.get("important_clauses")
+    )
+
 
     high_risks = sum(
         1
         for risk in risks
-        if str(risk.get("severity", "")).upper() == "HIGH"
+        if str(
+            risk.get(
+                "severity",
+                "",
+            )
+        ).upper() == "HIGH"
     )
+
 
     medium_risks = sum(
         1
         for risk in risks
-        if str(risk.get("severity", "")).upper() == "MEDIUM"
+        if str(
+            risk.get(
+                "severity",
+                "",
+            )
+        ).upper() == "MEDIUM"
     )
+
 
     low_risks = sum(
         1
         for risk in risks
-        if str(risk.get("severity", "")).upper() == "LOW"
+        if str(
+            risk.get(
+                "severity",
+                "",
+            )
+        ).upper() == "LOW"
     )
+
+
+    # --------------------------------------------------------
+    # RESULT METRICS
+    # --------------------------------------------------------
 
     metric1, metric2, metric3, metric4 = st.columns(4)
 
     with metric1:
         st.metric(
-            "High risks",
+            "🔴 High Risks",
             high_risks,
         )
 
     with metric2:
         st.metric(
-            "Medium risks",
+            "🟠 Medium Risks",
             medium_risks,
         )
 
     with metric3:
         st.metric(
-            "Low risks",
+            "🟢 Low Risks",
             low_risks,
         )
 
     with metric4:
         st.metric(
-            "Pages",
+            "📄 Pages",
             len(pages),
         )
+
+
+    # --------------------------------------------------------
+    # RESULT TABS
+    # --------------------------------------------------------
 
     tabs = st.tabs(
         [
@@ -1537,14 +2734,17 @@ if analysis:
         ]
     )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # SUMMARY
-    # --------------------------------------------------------
+    # ========================================================
+
     with tabs[0]:
+
         st.subheader(
             analysis.get(
                 "document_type",
-                "Legal document",
+                "Legal Document",
             )
         )
 
@@ -1555,149 +2755,273 @@ if analysis:
             )
         )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # RISKS
-    # --------------------------------------------------------
+    # ========================================================
+
     with tabs[1]:
-        render_risks(risks)
 
-    # --------------------------------------------------------
-    # RIGHTS
-    # --------------------------------------------------------
-    with tabs[2]:
-        render_rights(rights)
-
-    # --------------------------------------------------------
-    # MISSING
-    # --------------------------------------------------------
-    with tabs[3]:
-        render_missing_clauses(missing)
-
-    # --------------------------------------------------------
-    # IMPORTANT
-    # --------------------------------------------------------
-    with tabs[4]:
-        render_important_clauses(important)
-
-    # --------------------------------------------------------
-    # SOURCES
-    # --------------------------------------------------------
-    with tabs[5]:
-        retrieved_sources = st.session_state.get(
-            "sources",
-            [],
+        render_risks(
+            risks
         )
 
-        if not retrieved_sources:
-            st.info(
-                "No sufficiently relevant legal source was retrieved."
+
+    # ========================================================
+    # RIGHTS
+    # ========================================================
+
+    with tabs[2]:
+
+        render_rights(
+            rights
+        )
+
+
+    # ========================================================
+    # MISSING
+    # ========================================================
+
+    with tabs[3]:
+
+        render_missing_clauses(
+            missing
+        )
+
+
+    # ========================================================
+    # IMPORTANT
+    # ========================================================
+
+    with tabs[4]:
+
+        render_important_clauses(
+            important
+        )
+
+
+    # ========================================================
+    # SOURCES
+    # ========================================================
+
+    with tabs[5]:
+
+        retrieved_sources = (
+            st.session_state.get(
+                "sources",
+                [],
             )
+        )
+
+
+        if not retrieved_sources:
+
+            st.info(
+                "No sufficiently relevant legal source "
+                "was retrieved."
+            )
+
         else:
+
             for source in retrieved_sources:
+
                 st.markdown(
                     f"### {source['title']}"
                 )
+
                 st.markdown(
-                    f"**Section:** {source.get('section', '')}"
+                    f"**Section:** "
+                    f"{source.get('section', '')}"
                 )
+
                 st.markdown(
                     f"**Jurisdiction:** "
                     f"{source.get('jurisdiction', '')}"
                 )
+
                 st.markdown(
-                    f"[Open official source]({source['url']})"
+                    f"[Open official source]"
+                    f"({source['url']})"
                 )
+
                 st.write(
-                    source.get("text", "")
+                    source.get(
+                        "text",
+                        "",
+                    )
                 )
+
                 st.divider()
+
 
         st.caption(
             "The current MVP legal knowledge base is limited. "
-            "Expand and professionally review the legal corpus before "
-            "using this application for real legal decisions."
+            "Expand and professionally review the legal corpus "
+            "before using this application for real legal decisions."
         )
 
-    # --------------------------------------------------------
-    # ASK AI
-    # --------------------------------------------------------
-    with tabs[6]:
-        st.subheader("Ask questions about your document")
 
-        for message in st.session_state.get("chat_history", []):
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+    # ========================================================
+    # ASK AI
+    # ========================================================
+
+    with tabs[6]:
+
+        st.subheader(
+            "Ask questions about your document"
+        )
+
+
+        for message in st.session_state.get(
+            "chat_history",
+            [],
+        ):
+
+            with st.chat_message(
+                message["role"]
+            ):
+
+                st.markdown(
+                    message["content"]
+                )
+
 
         question = st.chat_input(
             "Ask something about the uploaded document..."
         )
 
+
         if question:
-            st.session_state["chat_history"].append(
+
+            st.session_state[
+                "chat_history"
+            ].append(
                 {
                     "role": "user",
                     "content": question,
                 }
             )
 
+
             with st.chat_message("user"):
-                st.markdown(question)
+
+                st.markdown(
+                    question
+                )
+
 
             try:
-                with st.chat_message("assistant"):
-                    with st.spinner("Searching document and legal context..."):
+
+                with st.chat_message(
+                    "assistant"
+                ):
+
+                    with st.spinner(
+                        "Searching document and legal context..."
+                    ):
+
                         answer = answer_document_question(
                             question=question,
                             language=language,
                         )
 
-                    st.markdown(answer)
 
-                st.session_state["chat_history"].append(
+                    st.markdown(
+                        answer
+                    )
+
+
+                st.session_state[
+                    "chat_history"
+                ].append(
                     {
                         "role": "assistant",
                         "content": answer,
                     }
                 )
 
+
             except Exception as exc:
-                error_message = f"Could not answer the question: {exc}"
 
-                with st.chat_message("assistant"):
-                    st.error(error_message)
+                error_message = (
+                    f"Could not answer the question: {exc}"
+                )
 
-                st.session_state["chat_history"].append(
+
+                with st.chat_message(
+                    "assistant"
+                ):
+
+                    st.error(
+                        error_message
+                    )
+
+
+                st.session_state[
+                    "chat_history"
+                ].append(
                     {
                         "role": "assistant",
                         "content": error_message,
                     }
                 )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # EXTRACTED TEXT
-    # --------------------------------------------------------
+    # ========================================================
+
     with tabs[7]:
-        st.subheader("Extracted document text")
+
+        st.subheader(
+            "Extracted document text"
+        )
+
 
         total_chars = sum(
-            len(page.get("text", ""))
+            len(
+                page.get(
+                    "text",
+                    "",
+                )
+            )
             for page in pages
         )
 
+
         st.caption(
-            f"{len(pages)} page(s) • {total_chars:,} characters"
+            f"{len(pages)} page(s) • "
+            f"{total_chars:,} characters"
         )
 
-        render_extracted_text(pages)
+
+        render_extracted_text(
+            pages
+        )
+
+
+    st.markdown(
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 # ============================================================
 # FOOTER
 # ============================================================
 
-st.divider()
-
-st.caption(
-    "Pakistan AI Legal Risk & Rights Analyzer • Hackathon MVP • "
-    "Informational use only"
-)
+st.markdown("""
+<div style="
+    border-top:1px solid #111e38;
+    margin-top:35px;
+    padding-top:18px;
+    text-align:center;
+    color:#475569;
+    font-size:11px;
+">
+    🛡️ DocuMind Legal AI
+    • Pakistan Legal Risk & Rights Analyzer
+    • Hackathon MVP
+    • Informational use only
+</div>
+""", unsafe_allow_html=True)
